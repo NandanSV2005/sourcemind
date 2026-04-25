@@ -2,14 +2,14 @@
 
 SourceMind is an AI-powered document intelligence platform built for research, learning, and deep analysis. Turn your PDFs, URLs, and texts into a private knowledge brain.
 
-[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/sourcemind)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/sourcemind)
+[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/sourcemind)](https://vercel.com/new/clone?repository-url=https://github.com/NandanSV2005/sourcemind)
 [![Render Deploy](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 🔗 Live Links
 - **Live Demo (Frontend)**: [Deployed on Vercel](https://sourcemind.vercel.app)
 - **Backend API**: [Deployed on Render](https://sourcemind-backend.onrender.com)
-- **GitHub Repository**: [View Code](https://github.com/your-username/sourcemind)
+- **GitHub Repository**: [View Code](https://github.com/NandanSV2005/sourcemind)
 
 ## 🚀 Features
 - **Upload Pipeline**: Ingest PDFs, URLs, and raw text seamlessly.
