@@ -3,6 +3,7 @@ services:
     name: sourcemind-backend
     plan: free
     env: node
+    rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     envVars:
