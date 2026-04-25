@@ -152,7 +152,7 @@ const DemoShowcase = () => {
                   <CreditCard size={24} />
                 </div>
                 <span className="text-[10px] font-bold text-accent uppercase tracking-widest mb-4">Question</span>
-                <p className="text-lg font-bold text-text-primary italic font-heading">"What is the projected ROI for AI logistics by 2026?"</p>
+                <p className="text-lg font-bold text-text-primary italic font-heading">&quot;What is the projected ROI for AI logistics by 2026?&quot;</p>
                 <div className="mt-8 text-[10px] font-bold text-text-secondary uppercase">Click to Reveal</div>
               </div>
             </motion.div>

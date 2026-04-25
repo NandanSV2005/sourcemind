@@ -118,7 +118,7 @@ export default function ChatTab({ notebookId, messages, setMessages }: ChatTabPr
               <Bot size={32} />
             </div>
             <h3 className="text-xl font-heading mb-2">Ask anything about your sources</h3>
-            <p className="max-w-xs text-sm">I'll analyze your documents and provide answers with citations.</p>
+            <p className="max-w-xs text-sm">I&apos;ll analyze your documents and provide answers with citations.</p>
           </div>
         )}
 
@@ -228,7 +228,7 @@ function CitationChip({ source }: { source: SourceMetadata }) {
               <button onClick={() => setIsOpen(false)} className="text-text-secondary hover:text-text-primary text-[10px]">Close</button>
             </div>
             <p className="text-xs text-text-primary leading-relaxed italic">
-              "...{source.content}..."
+              &quot;...{source.content}...&quot;
             </p>
           </motion.div>
         )}

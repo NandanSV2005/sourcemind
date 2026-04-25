@@ -156,7 +156,7 @@ export default function GapFinderTab({ notebookId }: GapFinderTabProps) {
               <div className="space-y-4">
                 {result.unanswered_questions.map((q, i) => (
                   <motion.div key={i} variants={item} className="p-5 bg-surface-2 border border-border rounded-2xl">
-                    <h4 className="font-bold text-sm text-text-primary mb-2 italic">"{q.question}"</h4>
+                    <h4 className="font-bold text-sm text-text-primary mb-2 italic">&quot;{q.question}&quot;</h4>
                     <p className="text-xs text-text-secondary mb-3">{q.why_it_matters}</p>
                     <div className="flex items-center gap-2 pt-3 border-t border-border mt-3">
                       <div className="w-6 h-6 rounded bg-info/10 flex items-center justify-center text-info">
