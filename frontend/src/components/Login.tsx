@@ -19,7 +19,13 @@ export default function Login() {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/app`
+          }
+        });
         if (error) throw error;
         toast.success('Verification email sent! Check your inbox.');
       } else {
