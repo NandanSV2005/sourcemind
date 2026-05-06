@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Search, Loader2, CheckCircle2, AlertCircle, HelpCircle, ArrowRight } from 'lucide-react';
+import { Search, Loader2, CheckCircle2, AlertCircle, HelpCircle, ArrowRight, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import HistoryModal from './HistoryModal';
+import toast from 'react-hot-toast';
 
 interface GapResult {
   well_covered: { topic: string; confidence: string; evidence: string }[];
@@ -13,11 +14,13 @@ interface GapResult {
 
 interface GapFinderTabProps {
   notebookId: string;
+  history?: any[];
 }
 
-export default function GapFinderTab({ notebookId }: GapFinderTabProps) {
+export default function GapFinderTab({ notebookId, history = [] }: GapFinderTabProps) {
   const [result, setResult] = useState<GapResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const handleFindGaps = async () => {
     setIsLoading(true);
@@ -60,18 +63,48 @@ export default function GapFinderTab({ notebookId }: GapFinderTabProps) {
           <h2 className="text-3xl font-heading font-bold mb-2">Gap Finder</h2>
           <p className="text-text-secondary text-sm">Identify blind spots, contradictions, and unanswered questions in your research.</p>
         </div>
-        {!isLoading && (
-          <button
-            onClick={handleFindGaps}
-            className="group relative flex items-center gap-2 px-8 py-3 bg-accent text-black font-bold rounded-xl overflow-hidden transition-all hover:scale-105 active:scale-95"
-          >
-            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            <Search size={18} className="relative z-10" />
-            <span className="relative z-10">Find Gaps</span>
-            <div className="absolute inset-0 animate-pulse bg-accent/30 rounded-xl" />
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {history.length > 0 && (
+            <button
+              onClick={() => setIsHistoryOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-border hover:bg-surface-2 rounded-xl text-xs font-bold transition-all text-text-secondary hover:text-text-primary"
+            >
+              <Clock size={14} />
+              Reports ({history.length})
+            </button>
+          )}
+          {!isLoading && (
+            <button
+              onClick={handleFindGaps}
+              className="group relative flex items-center gap-2 px-8 py-3 bg-accent text-black font-bold rounded-xl overflow-hidden transition-all hover:scale-105 active:scale-95"
+            >
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              <Search size={18} className="relative z-10" />
+              <span className="relative z-10">Find Gaps</span>
+              <div className="absolute inset-0 animate-pulse bg-accent/30 rounded-xl" />
+            </button>
+          )}
+        </div>
       </div>
+
+      <HistoryModal 
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        title="Gap Report History"
+        items={history}
+        onSelect={(item) => {
+          setResult(item.result);
+          toast.success('Loaded saved report');
+        }}
+        renderItem={(item) => (
+          <div className="space-y-1">
+            <p className="text-sm font-bold truncate">
+              {item.result.research_verdict.substring(0, 60)}...
+            </p>
+            <p className="text-[10px] text-text-secondary">{new Date(item.created_at).toLocaleString()}</p>
+          </div>
+        )}
+      />
 
       {isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

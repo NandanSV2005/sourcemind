@@ -17,6 +17,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { cn } from '@/lib/utils';
+import HistoryModal from './HistoryModal';
 
 interface PodcastChapter {
   title: string;
@@ -32,13 +33,15 @@ interface PodcastData {
 
 interface PodcastTabProps {
   notebookId: string;
+  history?: any[];
 }
 
-export default function PodcastTab({ notebookId }: PodcastTabProps) {
+export default function PodcastTab({ notebookId, history = [] }: PodcastTabProps) {
   const [duration, setDuration] = useState('medium');
   const [tone, setTone] = useState('casual');
   const [isLoading, setIsLoading] = useState(false);
   const [podcast, setPodcast] = useState<PodcastData | null>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   
   // Audio State
   const [isPlaying, setIsPlaying] = useState(false);
@@ -157,7 +160,17 @@ export default function PodcastTab({ notebookId }: PodcastTabProps) {
       {/* Sidebar - Settings & Chapters */}
       <div className="w-80 border-r border-border bg-surface/10 p-6 flex flex-col gap-8 overflow-y-auto">
         <div>
-          <h3 className="text-xs font-bold text-text-secondary uppercase tracking-widest mb-4">Podcast Settings</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xs font-bold text-text-secondary uppercase tracking-widest">Settings</h3>
+            {history.length > 0 && (
+              <button 
+                onClick={() => setIsHistoryOpen(true)}
+                className="text-[10px] font-bold text-accent hover:underline flex items-center gap-1"
+              >
+                <Clock size={10} /> History
+              </button>
+            )}
+          </div>
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-xs text-text-secondary ml-1">Duration</label>
@@ -388,6 +401,27 @@ export default function PodcastTab({ notebookId }: PodcastTabProps) {
           </div>
         )}
       </div>
+
+      <HistoryModal 
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        title="Podcast History"
+        items={history}
+        onSelect={(item) => {
+          setPodcast(item);
+          toast.success('Loaded saved podcast episode');
+        }}
+        renderItem={(item) => (
+          <div className="space-y-1">
+            <p className="text-sm font-bold truncate">{item.title}</p>
+            <div className="flex items-center gap-2 text-[10px] text-text-secondary">
+              <span className="uppercase tracking-widest">{item.tone}</span>
+              <span>•</span>
+              <span>{new Date(item.created_at).toLocaleString()}</span>
+            </div>
+          </div>
+        )}
+      />
     </div>
   );
 }

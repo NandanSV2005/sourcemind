@@ -58,10 +58,38 @@ MIT
 
 ## 🛠️ Database Setup (Podcast Feature)
 
-To enable the **Podcast (Audio Overview)** feature, run the following SQL in your Supabase SQL Editor:
+To enable the **Notebook Memory (Persistent Workspace)** feature, run the following SQL in your Supabase SQL Editor:
 
 ```sql
-create table podcasts (
+-- 1) summaries table
+create table summaries (
+  id uuid primary key default gen_random_uuid(),
+  notebook_id uuid references notebooks(id) on delete cascade,
+  content text not null,
+  created_at timestamp default now()
+);
+
+-- 2) comparisons table
+create table comparisons (
+  id uuid primary key default gen_random_uuid(),
+  notebook_id uuid references notebooks(id) on delete cascade,
+  doc_id_a uuid references documents(id) on delete cascade,
+  doc_id_b uuid references documents(id) on delete cascade,
+  content text not null,
+  agreement_score int,
+  created_at timestamp default now()
+);
+
+-- 3) gap_reports table
+create table gap_reports (
+  id uuid primary key default gen_random_uuid(),
+  notebook_id uuid references notebooks(id) on delete cascade,
+  result jsonb not null,
+  created_at timestamp default now()
+);
+
+-- 4) podcasts table (if not already created)
+create table if not exists podcasts (
   id uuid primary key default gen_random_uuid(),
   notebook_id uuid references notebooks(id) on delete cascade,
   title text not null,

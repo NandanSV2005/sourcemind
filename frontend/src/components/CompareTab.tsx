@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Columns, Loader2, FileText, Check, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Columns, Loader2, FileText, Check, AlertTriangle, ArrowRight, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import HistoryModal from './HistoryModal';
+import toast from 'react-hot-toast';
 
 interface Source {
   id: string;
@@ -12,14 +13,17 @@ interface Source {
 
 interface CompareTabProps {
   sources: Source[];
+  history?: any[];
+  notebookId?: string;
 }
 
-export default function CompareTab({ sources }: CompareTabProps) {
+export default function CompareTab({ sources, history = [], notebookId }: CompareTabProps) {
   const [docA, setDocA] = useState('');
   const [docB, setDocB] = useState('');
   const [comparison, setComparison] = useState<string | null>(null);
   const [score, setScore] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const handleCompare = async () => {
     if (!docA || !docB || docA === docB) return;
@@ -46,10 +50,51 @@ export default function CompareTab({ sources }: CompareTabProps) {
 
   return (
     <div className="p-8 max-w-6xl mx-auto h-full overflow-y-auto">
-      <div className="mb-12">
-        <h2 className="text-3xl font-heading font-bold mb-2">Multi-Doc Comparator</h2>
-        <p className="text-text-secondary text-sm">Analyze agreements and contradictions between two specific sources.</p>
+      <div className="mb-12 flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-heading font-bold mb-2">Multi-Doc Comparator</h2>
+          <p className="text-text-secondary text-sm">Analyze agreements and contradictions between two specific sources.</p>
+        </div>
+        {history.length > 0 && (
+          <button
+            onClick={() => setIsHistoryOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-border hover:bg-surface-2 rounded-xl text-xs font-bold transition-all text-text-secondary hover:text-text-primary"
+          >
+            <Clock size={14} />
+            Recent ({history.length})
+          </button>
+        )}
       </div>
+
+      <HistoryModal 
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        title="Comparison History"
+        items={history}
+        onSelect={(item) => {
+          setComparison(item.content);
+          setScore(item.agreement_score);
+          setDocA(item.doc_id_a);
+          setDocB(item.doc_id_b);
+          toast.success('Loaded saved comparison');
+        }}
+        renderItem={(item) => {
+          const docAName = sources.find(s => s.id === item.doc_id_a)?.title || 'Source A';
+          const docBName = sources.find(s => s.id === item.doc_id_b)?.title || 'Source B';
+          return (
+            <div className="space-y-1">
+              <p className="text-sm font-bold truncate">
+                {docAName} vs {docBName}
+              </p>
+              <div className="flex items-center gap-2 text-[10px] text-text-secondary">
+                <span className="text-accent font-bold">Score: {item.agreement_score}/10</span>
+                <span>•</span>
+                <span>{new Date(item.created_at).toLocaleString()}</span>
+              </div>
+            </div>
+          );
+        }}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr,auto,1fr,auto] items-end gap-4 mb-12">
         <div className="space-y-2">

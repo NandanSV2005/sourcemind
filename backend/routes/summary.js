@@ -42,6 +42,12 @@ ${combinedContent}`;
     const result = llmResponse.body;
     const summary = result.choices[0]?.message?.content || "Could not generate summary.";
 
+    // Save to memory
+    await supabase.from('summaries').insert({
+      notebook_id,
+      content: summary
+    });
+
     res.json({ 
       summary, 
       documents_included: documents.map(d => ({ id: d.id, title: d.title })) 

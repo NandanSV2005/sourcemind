@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Sparkles, Loader2, FileText, RefreshCw } from 'lucide-react';
+import { Sparkles, Loader2, FileText, RefreshCw, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import toast from 'react-hot-toast';
+import HistoryModal from './HistoryModal';
 
 interface SummaryTabProps {
   notebookId: string;
@@ -12,6 +13,8 @@ interface SummaryTabProps {
   setSummary: (val: string | null) => void;
   docsIncluded: { id: string, title: string }[];
   setDocsIncluded: (val: { id: string, title: string }[]) => void;
+  history?: any[];
+  onLoadFromHistory?: (item: any) => void;
 }
 
 export default function SummaryTab({ 
@@ -19,9 +22,12 @@ export default function SummaryTab({
   summary, 
   setSummary, 
   docsIncluded, 
-  setDocsIncluded 
+  setDocsIncluded,
+  history = [],
+  onLoadFromHistory
 }: SummaryTabProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const handleGenerate = async () => {
     setIsLoading(true);
@@ -51,27 +57,62 @@ export default function SummaryTab({
       <div className="mb-12 flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-heading font-bold mb-2">Auto Summary</h2>
-          <p className="text-text-secondary text-sm">Synthesize all your sources into a structured research briefing.</p>
+          <div className="flex items-center gap-3">
+            <p className="text-text-secondary text-sm">Synthesize all your sources into a structured research briefing.</p>
+            {summary && (
+              <span className="px-2 py-0.5 bg-accent/10 border border-accent/20 rounded text-[10px] font-bold text-accent uppercase tracking-tighter">
+                Loaded from Memory
+              </span>
+            )}
+          </div>
         </div>
-        {!summary && !isLoading && (
-          <button
-            onClick={handleGenerate}
-            className="flex items-center gap-2 px-6 py-3 bg-accent text-black font-bold rounded-xl hover:scale-105 active:scale-95 transition-all"
-          >
-            <Sparkles size={18} />
-            Generate Summary
-          </button>
-        )}
-        {summary && !isLoading && (
-          <button
-            onClick={handleGenerate}
-            className="flex items-center gap-2 px-4 py-2 border border-border hover:bg-surface-2 rounded-xl text-xs font-bold transition-all"
-          >
-            <RefreshCw size={14} />
-            Regenerate
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {history.length > 0 && (
+            <button
+              onClick={() => setIsHistoryOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-border hover:bg-surface-2 rounded-xl text-xs font-bold transition-all text-text-secondary hover:text-text-primary"
+            >
+              <Clock size={14} />
+              History ({history.length})
+            </button>
+          )}
+          {!summary && !isLoading && (
+            <button
+              onClick={handleGenerate}
+              className="flex items-center gap-2 px-6 py-3 bg-accent text-black font-bold rounded-xl hover:scale-105 active:scale-95 transition-all"
+            >
+              <Sparkles size={18} />
+              Generate Summary
+            </button>
+          )}
+          {summary && !isLoading && (
+            <button
+              onClick={handleGenerate}
+              className="flex items-center gap-2 px-4 py-2 border border-border hover:bg-surface-2 rounded-xl text-xs font-bold transition-all"
+            >
+              <RefreshCw size={14} />
+              Regenerate
+            </button>
+          )}
+        </div>
       </div>
+
+      <HistoryModal 
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        title="Summary History"
+        items={history}
+        onSelect={(item) => {
+          onLoadFromHistory?.(item);
+          toast.success('Loaded saved summary');
+        }}
+        renderItem={(item) => (
+          <div className="space-y-1">
+            <p className="text-sm font-bold truncate">{item.content.substring(0, 60)}...</p>
+            <p className="text-[10px] text-text-secondary">{new Date(item.created_at).toLocaleString()}</p>
+          </div>
+        )}
+      />
 
       {isLoading && (
         <div className="space-y-8">

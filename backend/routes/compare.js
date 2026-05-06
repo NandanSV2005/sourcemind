@@ -45,6 +45,15 @@ ${docB.content}`;
     const scoreMatch = comparison.match(/Agreement Score: (\d+)\/10/);
     const agreement_score = scoreMatch ? parseInt(scoreMatch[1]) : 5;
 
+    // Save to memory
+    await supabase.from('comparisons').insert({
+      notebook_id: docA.notebook_id,
+      doc_id_a,
+      doc_id_b,
+      content: comparison,
+      agreement_score
+    });
+
     res.json({ comparison, agreement_score });
   } catch (err) {
     next(err);

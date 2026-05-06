@@ -73,6 +73,12 @@ ${combinedContent}`;
       jsonResponse = JSON.parse(jsonMatchRetry ? jsonMatchRetry[0] : contentRetry);
     }
 
+    // Save to memory
+    await supabase.from('gap_reports').insert({
+      notebook_id,
+      result: jsonResponse
+    });
+
     res.json(jsonResponse);
   } catch (err) {
     next(err);

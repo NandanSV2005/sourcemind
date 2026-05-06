@@ -46,6 +46,13 @@ export default function Home() {
   const [mindMapData, setMindMapData] = useState<any>(null);
   const [flashcards, setFlashcards] = useState<any[]>([]);
   const [quiz, setQuiz] = useState<any>(null);
+  
+  // Memory History State
+  const [summariesHistory, setSummariesHistory] = useState<any[]>([]);
+  const [comparisonsHistory, setComparisonsHistory] = useState<any[]>([]);
+  const [gapsHistory, setGapsHistory] = useState<any[]>([]);
+  const [podcastsHistory, setPodcastsHistory] = useState<any[]>([]);
+  const [isMemoryLoading, setIsMemoryLoading] = useState(false);
 
   // For this version, we'll use a fixed notebook ID or create one if none exists
   // In a real app, this would come from a URL param or list
@@ -121,6 +128,40 @@ export default function Home() {
       toast.error('Failed to load your research');
     } finally {
       setIsLoading(false);
+      if (notebookIdRef.current) fetchMemory(notebookIdRef.current);
+    }
+  };
+
+  const fetchMemory = async (nbId: string) => {
+    setIsMemoryLoading(true);
+    try {
+      const [memoryRes, summariesRes, gapsRes] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/memory/${nbId}`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/memory/${nbId}/summaries`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/memory/${nbId}/gaps`)
+      ]);
+
+      if (!memoryRes.ok) throw new Error('Failed to fetch memory');
+      
+      const memoryData = await memoryRes.json();
+      const summariesData = await summariesRes.json();
+      const gapsData = await gapsRes.json();
+
+      // Update current states with latest memory
+      setMessages(memoryData.chat || []);
+      setSummary(memoryData.latest_summary?.content || null);
+      
+      // Update history states
+      setSummariesHistory(summariesData || []);
+      setComparisonsHistory(memoryData.comparisons || []);
+      setPodcastsHistory(memoryData.podcasts || []);
+      setGapsHistory(gapsData || []);
+
+      console.log('🧠 [Memory] Persistent workspace loaded');
+    } catch (error) {
+      console.error('[Memory Error]:', error);
+    } finally {
+      setIsMemoryLoading(false);
     }
   };
 
@@ -256,10 +297,23 @@ export default function Home() {
                     setSummary={setSummary} 
                     docsIncluded={docsIncluded} 
                     setDocsIncluded={setDocsIncluded} 
+                    history={summariesHistory}
+                    onLoadFromHistory={(item) => setSummary(item.content)}
                   />
                 )}
-                {activeTab === 'compare' && <CompareTab sources={sources} />}
-                {activeTab === 'gaps' && <GapFinderTab notebookId={notebook?.id || ''} />}
+                {activeTab === 'compare' && (
+                  <CompareTab 
+                    sources={sources} 
+                    history={comparisonsHistory} 
+                    notebookId={notebook?.id || ''}
+                  />
+                )}
+                {activeTab === 'gaps' && (
+                  <GapFinderTab 
+                    notebookId={notebook?.id || ''} 
+                    history={gapsHistory}
+                  />
+                )}
                 {activeTab === 'mindmap' && (
                   <MindMapTab 
                     notebookId={notebook?.id || ''} 
@@ -284,6 +338,7 @@ export default function Home() {
                 {activeTab === 'podcast' && (
                   <PodcastTab 
                     notebookId={notebook?.id || ''} 
+                    history={podcastsHistory}
                   />
                 )}
               </motion.div>

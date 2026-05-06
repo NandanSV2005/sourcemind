@@ -12,6 +12,7 @@ const mindmapRoutes = require('./routes/mindmap');
 const flashcardsRoutes = require('./routes/flashcards');
 const quizRoutes = require('./routes/quiz');
 const podcastRoutes = require('./routes/podcast');
+const memoryRoutes = require('./routes/memory');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -39,6 +40,7 @@ app.use('/api/mindmap', mindmapRoutes);
 app.use('/api/flashcards', flashcardsRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/podcast', podcastRoutes);
+app.use('/api/memory', memoryRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
