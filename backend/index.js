@@ -11,6 +11,7 @@ const gapsRoutes = require('./routes/gaps');
 const mindmapRoutes = require('./routes/mindmap');
 const flashcardsRoutes = require('./routes/flashcards');
 const quizRoutes = require('./routes/quiz');
+const podcastRoutes = require('./routes/podcast');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -37,6 +38,7 @@ app.use('/api/gaps', gapsRoutes);
 app.use('/api/mindmap', mindmapRoutes);
 app.use('/api/flashcards', flashcardsRoutes);
 app.use('/api/quiz', quizRoutes);
+app.use('/api/podcast', podcastRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

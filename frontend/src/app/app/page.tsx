@@ -9,15 +9,16 @@ import GapFinderTab from '@/components/GapFinderTab';
 import MindMapTab from '@/components/MindMapTab';
 import FlashcardsTab from '@/components/FlashcardsTab';
 import QuizTab from '@/components/QuizTab';
+import PodcastTab from '@/components/PodcastTab';
 import AddSourceModal from '@/components/AddSourceModal';
 import Login from '@/components/Login';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster, toast } from 'react-hot-toast';
-import { MessageSquare, FileText, Columns, Search, Loader2, Share2, CreditCard, ClipboardCheck } from 'lucide-react';
+import { MessageSquare, FileText, Columns, Search, Loader2, Share2, CreditCard, ClipboardCheck, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type Tab = 'chat' | 'summary' | 'compare' | 'gaps' | 'mindmap' | 'flashcards' | 'quiz';
+type Tab = 'chat' | 'summary' | 'compare' | 'gaps' | 'mindmap' | 'flashcards' | 'quiz' | 'podcast';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('chat');
@@ -208,6 +209,7 @@ export default function Home() {
               { id: 'mindmap', label: 'Mind Map', icon: Share2 },
               { id: 'flashcards', label: 'Flashcards', icon: CreditCard },
               { id: 'quiz', label: 'Quiz', icon: ClipboardCheck },
+              { id: 'podcast', label: 'Podcast', icon: Mic },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -277,6 +279,11 @@ export default function Home() {
                     notebookId={notebook?.id || ''} 
                     quiz={quiz} 
                     setQuiz={setQuiz} 
+                  />
+                )}
+                {activeTab === 'podcast' && (
+                  <PodcastTab 
+                    notebookId={notebook?.id || ''} 
                   />
                 )}
               </motion.div>

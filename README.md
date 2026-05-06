@@ -53,3 +53,22 @@ Ensure the `FRONTEND_URL` in your Render backend matches the generated Vercel UR
 
 ## License
 MIT
+
+---
+
+## 🛠️ Database Setup (Podcast Feature)
+
+To enable the **Podcast (Audio Overview)** feature, run the following SQL in your Supabase SQL Editor:
+
+```sql
+create table podcasts (
+  id uuid primary key default gen_random_uuid(),
+  notebook_id uuid references notebooks(id) on delete cascade,
+  title text not null,
+  duration text,
+  tone text,
+  script text not null,
+  chapters jsonb,
+  created_at timestamp default now()
+);
+```
