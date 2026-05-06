@@ -19,6 +19,7 @@ interface SidebarProps {
   onDeleteSource: (id: string) => void;
   selectedSourceId?: string;
   onSelectSource: (id: string) => void;
+  notebookId: string;
 }
 
 export default function Sidebar({
@@ -28,7 +29,9 @@ export default function Sidebar({
   onAddSource,
   onDeleteSource,
   selectedSourceId,
-  onSelectSource
+  selectedSourceId,
+  onSelectSource,
+  notebookId
 }: SidebarProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [tempTitle, setTempTitle] = useState(notebookTitle);
@@ -158,6 +161,9 @@ export default function Sidebar({
         >
           Log Out
         </button>
+        <div className="pt-2 text-[8px] text-text-secondary opacity-20 font-mono truncate text-center">
+          NB: {notebookId}
+        </div>
       </div>
     </div>
   );

@@ -231,6 +231,7 @@ export default function Home() {
         onAddSource={() => setIsModalOpen(true)}
         onDeleteSource={handleDeleteSource}
         onSelectSource={() => {}} 
+        notebookId={notebook?.id || notebookIdRef.current || 'loading...'}
       />
 
       {isLoading ? (
