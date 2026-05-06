@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState } from 'react';
 import { Columns, Loader2, FileText, Check, AlertTriangle, ArrowRight, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';

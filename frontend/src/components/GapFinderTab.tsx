@@ -1,9 +1,11 @@
 "use client";
 
+import React, { useState } from 'react';
 import { Search, Loader2, CheckCircle2, AlertCircle, HelpCircle, ArrowRight, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import HistoryModal from './HistoryModal';
 import toast from 'react-hot-toast';
+import { cn } from '@/lib/utils';
 
 interface GapResult {
   well_covered: { topic: string; confidence: string; evidence: string }[];
@@ -223,4 +225,4 @@ export default function GapFinderTab({ notebookId, history = [] }: GapFinderTabP
   );
 }
 
-import { cn } from '@/lib/utils';
+
