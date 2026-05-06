@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { X, Upload, Globe, Type, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'sonner';
+import { toast } from 'react-hot-toast';
 import { cn } from '@/lib/utils';
 
 interface AddSourceModalProps {

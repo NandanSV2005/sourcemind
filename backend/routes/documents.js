@@ -65,7 +65,7 @@ router.post('/upload', upload.single('file'), async (req, res, next) => {
 
     if (docError) {
       console.error('[Upload] ❌ Step 1 Error:', docError);
-      return res.status(500).json({ error: `Database Insert Failed: ${docError.message}` });
+      return res.status(500).json({ error: `Database Insert Failed (Table: documents): ${docError.message}. Ensure you have run the Unified SQL script in Supabase.` });
     }
 
     console.log(`[Upload] ✅ Step 1 Success! Doc ID: ${doc.id}`);
