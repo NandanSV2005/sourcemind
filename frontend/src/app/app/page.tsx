@@ -352,8 +352,12 @@ export default function Home() {
           <AddSourceModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            notebookId={notebookIdRef.current || notebook?.id}
-            onSuccess={() => fetchSources()}
+            notebookId={notebook?.id || notebookIdRef.current}
+            onSuccess={(newDoc) => {
+              setSources(prev => [newDoc, ...prev]);
+              // Also trigger a background fetch to be safe
+              fetchSources(notebook?.id || notebookIdRef.current);
+            }}
           />
         )}
       </AnimatePresence>

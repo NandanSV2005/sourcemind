@@ -49,10 +49,9 @@ router.post('/upload', upload.single('file'), async (req, res, next) => {
     if (!content) return res.status(400).json({ error: 'No content found' });
     if (!notebook_id) return res.status(400).json({ error: 'Notebook ID is required' });
 
-    console.log(`[Upload] Starting upload for notebook: ${notebook_id}`);
+    console.log(`[Upload] 🟢 Step 1: Starting DB insert for notebook: ${notebook_id}`);
 
     // 1. Insert document
-    console.log('[DB] Attempting insert into "documents" table for notebook:', notebook_id);
     const { data: doc, error: docError } = await supabase
       .from('documents')
       .insert([{ 
@@ -65,35 +64,54 @@ router.post('/upload', upload.single('file'), async (req, res, next) => {
       .single();
 
     if (docError) {
-      console.error('[DB Error] Insert failed:', docError);
-      return res.status(500).json({ error: docError.message, details: docError });
+      console.error('[Upload] ❌ Step 1 Error:', docError);
+      return res.status(500).json({ error: `Database Insert Failed: ${docError.message}` });
     }
 
-    console.log('[DB] Success! Document ID:', doc.id);
+    console.log(`[Upload] ✅ Step 1 Success! Doc ID: ${doc.id}`);
+    console.log(`[Upload] 🟡 Step 2: Generating embeddings for ${content.length} chars...`);
 
     // 2. Chunk and embed
     const chunks = chunkText(content);
+    console.log(`[Upload] Splitting into ${chunks.length} chunks...`);
+    
     const chunkInserts = [];
 
-    for (let i = 0; i < chunks.length; i++) {
-      const embedding = await generateEmbedding(chunks[i]);
-      chunkInserts.push({
-        document_id: doc.id,
-        notebook_id,
-        content: chunks[i],
-        chunk_index: i,
-        embedding
+    try {
+      for (let i = 0; i < chunks.length; i++) {
+        const embedding = await generateEmbedding(chunks[i]);
+        chunkInserts.push({
+          document_id: doc.id,
+          notebook_id,
+          content: chunks[i],
+          chunk_index: i,
+          embedding
+        });
+      }
+
+      console.log(`[Upload] 🟢 Step 3: Inserting ${chunkInserts.length} chunks into DB...`);
+      const { error: chunkError } = await supabase
+        .from('chunks')
+        .insert(chunkInserts);
+
+      if (chunkError) {
+        console.error('[Upload] ❌ Step 3 Error:', chunkError);
+        throw chunkError;
+      }
+
+      console.log(`[Upload] 🏆 Upload Complete for "${title}"`);
+      res.json(doc);
+    } catch (innerError) {
+      console.error('[Upload] ❌ Embedding/Chunking Phase Failed:', innerError);
+      // We still return the doc because it WAS inserted into the 'documents' table, 
+      // but we warn the user that chat might not work.
+      res.status(207).json({ 
+        ...doc, 
+        warning: 'Document saved, but AI indexing failed. Chat/Search may be unavailable for this file.' 
       });
     }
-
-    const { error: chunkError } = await supabase
-      .from('chunks')
-      .insert(chunkInserts);
-
-    if (chunkError) throw chunkError;
-
-    res.json(doc);
   } catch (err) {
+    console.error('[Upload] ❌ Critical Failure:', err);
     next(err);
   }
 });
