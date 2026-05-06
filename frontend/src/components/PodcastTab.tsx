@@ -161,45 +161,60 @@ export default function PodcastTab({ notebookId }: PodcastTabProps) {
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-xs text-text-secondary ml-1">Duration</label>
-              <select 
-                value={duration} 
-                onChange={(e) => setDuration(e.target.value)}
-                className="w-full bg-surface-2 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-accent transition-colors"
-              >
-                <option value="short">Short (3-5 min)</option>
-                <option value="medium">Medium (6-10 min)</option>
-                <option value="long">Long (12-18 min)</option>
-              </select>
+              <div className="relative">
+                <select 
+                  value={duration} 
+                  onChange={(e) => setDuration(e.target.value)}
+                  className="w-full bg-surface-2 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="short">Short (3-5 min)</option>
+                  <option value="medium">Medium (6-10 min)</option>
+                  <option value="long">Long (12-18 min)</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary">
+                  <ChevronRight size={14} className="rotate-90" />
+                </div>
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-xs text-text-secondary ml-1">Tone</label>
-              <select 
-                value={tone} 
-                onChange={(e) => setTone(e.target.value)}
-                className="w-full bg-surface-2 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-accent transition-colors"
-              >
-                <option value="casual">Casual & Fun</option>
-                <option value="professional">Professional</option>
-                <option value="funny">Entertaining / Funny</option>
-              </select>
+              <div className="relative">
+                <select 
+                  value={tone} 
+                  onChange={(e) => setTone(e.target.value)}
+                  className="w-full bg-surface-2 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="casual">Casual & Fun</option>
+                  <option value="professional">Professional</option>
+                  <option value="funny">Entertaining / Funny</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary">
+                  <ChevronRight size={14} className="rotate-90" />
+                </div>
+              </div>
             </div>
             {voices.length > 0 && (
               <div className="space-y-2">
                 <label className="text-xs text-text-secondary ml-1 flex items-center gap-1">
                   <Volume2 size={12} /> Playback Voice
                 </label>
-                <select 
-                  value={currentVoice?.name || ''} 
-                  onChange={(e) => {
-                    const v = voices.find(v => v.name === e.target.value);
-                    if (v) setCurrentVoice(v);
-                  }}
-                  className="w-full bg-surface-2 border border-border rounded-xl px-4 py-2.5 text-xs outline-none focus:border-accent transition-colors"
-                >
-                  {voices.map(v => (
-                    <option key={v.name} value={v.name}>{v.name}</option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select 
+                    value={currentVoice?.name || ''} 
+                    onChange={(e) => {
+                      const v = voices.find(v => v.name === e.target.value);
+                      if (v) setCurrentVoice(v);
+                    }}
+                    className="w-full bg-surface-2 border border-border rounded-xl px-4 py-2.5 text-xs outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
+                  >
+                    {voices.map(v => (
+                      <option key={v.name} value={v.name}>{v.name}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary">
+                    <ChevronRight size={14} className="rotate-90" />
+                  </div>
+                </div>
               </div>
             )}
             <button
