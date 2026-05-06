@@ -29,7 +29,6 @@ export default function Sidebar({
   onAddSource,
   onDeleteSource,
   selectedSourceId,
-  selectedSourceId,
   onSelectSource,
   notebookId
 }: SidebarProps) {
