@@ -52,7 +52,10 @@ export default function AddSourceModal({ isOpen, onClose, notebookId, onSuccess 
       }
 
       setProgress(40);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/documents/upload`, {
+      const uploadUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/documents/upload`;
+      console.log(`[Network Check] Attempting POST to: ${uploadUrl}`);
+      
+      const response = await fetch(uploadUrl, {
         method: 'POST',
         body: formData
       });
